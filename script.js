@@ -8,8 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const unlimitedCheckbox = document.querySelector('#unlimited');
     const characterSelect = document.querySelector('#characterSelect');
 
-
-
     // キャラクターIDと名前のマッピング
     const characterNames = {
         1: 'モニカ',
@@ -89,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
         75: 'モルガナ',
         76: 'ユニ',
         77: '',
-        78: '',
+        78: 'アサヒ',
         79: '',
         80: '',
         81: '',
@@ -106,108 +104,113 @@ document.addEventListener('DOMContentLoaded', () => {
         92: ''
     };
 
-// プルダウンリストのオプションを生成
-const populateCharacterSelect = () => {
-    Object.entries(characterNames).forEach(([id, name]) => {
-        if (name) { // 名前があるキャラクターのみ追加
-            const option = document.createElement('option');
-            option.value = id;
-            option.textContent = name;
-            characterSelect.appendChild(option);
-        }
-    });
-};
-
-populateCharacterSelect();
-
-const fetchData = async (url, urlNumber) => {
-    try {
-        const maskedUrlNumber = '*' + urlNumber.toString().slice(1);
-        loadingElement.textContent = `読み込み中... ワールド: ${maskedUrlNumber}`;
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch data from URL ${urlNumber}`);
-        }
-        const jsonData = await response.json();
-        loadingElement.textContent = '';
-        return jsonData.data;
-    } catch (error) {
-        console.error(error);
-        return [];
-    }
-};
-
-const displayRankingTable = (characters) => {
-    tableBody.innerHTML = '';  // テーブルをクリア
-    const sortedCharacters = characters.sort((a, b) => b.BattlePower - a.BattlePower); // バトルパワーで降順ソート
-    sortedCharacters.slice(0, 100).forEach((character, index) => {
-        const name = characterNames[character.CharacterId] || 'Unknown';
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${index + 1 + "位" }</td>
-            <td>${name}</td>
-            <td>${character.BattlePower}</td>
-            <td>${character.UrlNumber}</td>
-        `;
-        tableBody.appendChild(row);
-    });
-};
-
-const updateAccessTime = () => {
-    const currentTime = new Date();
-    timedateElement.textContent = `Access Time: ${currentTime.toLocaleString()}`;
-};
-
-const padNumber = (num) => {
-    const str = num.toString().padStart(3, '0'); // 3桁になるようにゼロ埋め
-    return `1${str}`; // 先頭に '1' を追加
-};
-
-const loadData = async () => {
-    updateAccessTime(); // Access Timeを更新
-    const unlimited = unlimitedCheckbox.checked;
-    let startRange = parseInt(startRangeInput.value);
-    let endRange = parseInt(endRangeInput.value);
-
-    if (!unlimited) {
-        if (isNaN(startRange) || isNaN(endRange) || startRange > endRange) {
-            alert('有効な範囲を入力してください。');
-            return;
-        }
-    } else {
-        startRange = 1;
-        endRange = Infinity; // 無限に読み込むために非常に大きな値を設定
-    }
-
-    const allCharacters = [];
-    for (let num = startRange; num <= endRange; num++) {
-        const urlNumber = padNumber(num);
-        const url = `https://api.mentemori.icu/${urlNumber}/arena/latest`;
-        const data = await fetchData(url, urlNumber);
-        if (data.length === 0) {
-            break;
-        }
-        data.forEach(entry => {
-            const characters = entry.UserCharacterInfoList || [];
-            allCharacters.push(...characters.map(character => ({...character, UrlNumber: urlNumber})));
+    // プルダウンリストオプション
+    const populateCharacterSelect = () => {
+        Object.entries(characterNames).forEach(([id, name]) => {
+            if (name) { // 名前があるキャラクター追加
+                const option = document.createElement('option');
+                option.value = id;
+                option.textContent = name;
+                characterSelect.appendChild(option);
+            }
         });
-    }
-    const selectedCharacterId = characterSelect.value;
-    const filteredCharacters = selectedCharacterId
-        ? allCharacters.filter(character => character.CharacterId == selectedCharacterId)
-        : allCharacters;
-    displayRankingTable(filteredCharacters);
-};
+    };
 
-unlimitedCheckbox.addEventListener('change', () => {
-    const disabled = unlimitedCheckbox.checked;
-    startRangeInput.disabled = disabled;
-    endRangeInput.disabled = disabled;
-});
+    populateCharacterSelect();
 
-loadDataButton.addEventListener('click', loadData);
+    const fetchData = async (url, urlNumber) => {
+        try {
+            const maskedUrlNumber = '*' + urlNumber.toString().slice(1);
+            loadingElement.textContent = `読み込み中... ワールド: ${maskedUrlNumber}`;
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch data from URL ${urlNumber}`);
+            }
+            const jsonData = await response.json();
+            loadingElement.textContent = '';
+            return jsonData.data;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    };
 
-    // チェックボックスをデフォルトでチェックし、対応する入力フィールドを無効にする
+    const displayRankingTable = (characters) => {
+        tableBody.innerHTML = '';  // テーブルクリア
+        const sortedCharacters = characters.sort((a, b) => b.BattlePower - a.BattlePower); // バトルパワーで降順ソート
+        sortedCharacters.slice(0, 100).forEach((character, index) => {
+            const name = characterNames[character.CharacterId] || 'Unknown';
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${character.PlayerName}</td>
+                <td>${index + 1 + "位" }</td>
+                <td>${name}</td>
+                <td>${character.BattlePower}</td>
+                <td>${character.UrlNumber}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    };
+
+    const updateAccessTime = () => {
+        const currentTime = new Date();
+        timedateElement.textContent = `Access Time: ${currentTime.toLocaleString()}`;
+    };
+
+    const padNumber = (num) => {
+        const str = num.toString().padStart(3, '0'); 
+        return `1${str}`; 
+    };
+
+    const loadData = async () => {
+        updateAccessTime(); // Access Time更新
+        const unlimited = unlimitedCheckbox.checked;
+        let startRange = parseInt(startRangeInput.value);
+        let endRange = parseInt(endRangeInput.value);
+
+        if (!unlimited) {
+            if (isNaN(startRange) || isNaN(endRange) || startRange > endRange) {
+                alert('有効な範囲を入力してください。');
+                return;
+            }
+        } else {
+            startRange = 1;
+            endRange = Infinity; 
+        }
+
+        const allCharacters = [];
+        for (let num = startRange; num <= endRange; num++) {
+            const urlNumber = padNumber(num);
+            const url = `https://api.mentemori.icu/${urlNumber}/arena/latest`;
+            const data = await fetchData(url, urlNumber);
+            if (data.length === 0) {
+                break;
+            }
+            data.forEach(entry => {
+                const characters = entry.UserCharacterInfoList || [];
+                allCharacters.push(...characters.map(character => ({
+                    ...character,
+                    PlayerName: entry.PlayerName,
+                    UrlNumber: urlNumber
+                })));
+            });
+        }
+        const selectedCharacterId = characterSelect.value;
+        const filteredCharacters = selectedCharacterId
+            ? allCharacters.filter(character => character.CharacterId == selectedCharacterId)
+            : allCharacters;
+        displayRankingTable(filteredCharacters);
+    };
+
+    unlimitedCheckbox.addEventListener('change', () => {
+        const disabled = unlimitedCheckbox.checked;
+        startRangeInput.disabled = disabled;
+        endRangeInput.disabled = disabled;
+    });
+
+    loadDataButton.addEventListener('click', loadData);
+
+    // チェックボックスをデフォルトチェック
     unlimitedCheckbox.checked = true;
     startRangeInput.disabled = true;
     endRangeInput.disabled = true;
