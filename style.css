@@ -10,13 +10,18 @@ body {
     margin: 0 auto;
     background-color: #ffffff;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 0px;
+    box-shadow: 2 2 1px rgba(0, 0, 0, 0.1);
+    
 }
 
 .header {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.header h1{
+    
 }
 
 .controls {
@@ -25,11 +30,20 @@ body {
     margin-bottom: 20px;
 }
 
+/* .controls #unlimited{
+    width: 100%;
+    margin: 50px;
+} */
+
+.controls #startRange,.controls #endRange{
+    width: 50%;
+}
+
 .controls label,
 .controls select,
 .controls input,
 .controls button {
-    margin: 0 5px;
+    margin: 5px 5px;
     padding: 10px;
     font-size: 16px;
 }
@@ -60,3 +74,34 @@ table th {
 table tbody tr:nth-child(even) {
     background-color: #f9f9f9;
 }
+
+.caution{
+    background-color: #f9f9f9;
+    border: solid 1px #2b1a05;
+    border-radius: 10px;
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px 20px;
+
+}
+
+.caution h2{
+    width: 100%;
+    line-height: 20px;
+}
+
+.caution p{
+    width: 100%;
+    line-height: 3px;
+}
+
+
+
+
+@media screen and (max-width:750px) {
+    .controls #startRange,.controls #endRange{
+        width: 80%;
+    }
+};
+

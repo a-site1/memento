@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Character Ranking</title>
+    <link rel="stylesheet" href="./style.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,7 +14,7 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 800px; /* 単位を追加 */
             margin: 0 auto;
             background-color: #ffffff;
             padding: 20px;
@@ -72,7 +73,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>character BP Ranking</h1>
+            <h1>Character BP Ranking</h1>
         </div>
         <div class="controls">
             <div>
@@ -82,9 +83,9 @@
                 </select>
             </div>
             <div>
+                <input type="checkbox" id="unlimited"> 全ワールド<br>
                 <input type="number" id="startRange" placeholder="開始範囲">
                 <input type="number" id="endRange" placeholder="終了範囲">
-                <input type="checkbox" id="unlimited"> 全ワールド
                 <button id="loadDataButton">データを読み込む</button>
             </div>
         </div>
@@ -93,15 +94,15 @@
         <table id="dataTable">
             <thead>
                 <tr>
+                    <th>Player Name</th>
                     <th>Rank</th>
-                    <th>Name</th>
+                    <th>Character</th>
                     <th>BP</th>
                     <th>World</th>
                 </tr>
             </thead>
             <tbody></tbody>
         </table>
-    </div>
-    <script src="script.js"></script>
-</body>
-</html>
+
+        <section class="caution">
+        
